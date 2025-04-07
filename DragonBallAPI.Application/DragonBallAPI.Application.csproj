@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\DragonBallAPI.Core\DragonBallAPI.Core.csproj" />
+    <ProjectReference Include="..\DragonBallAPI.Infrastructure\DragonBallAPI.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
