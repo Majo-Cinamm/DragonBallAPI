@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using DragonBallAPI.Application.DTOs;
+using DragonBallAPI.Application.Interfaces;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
@@ -30,7 +32,7 @@ namespace DragonBallAPI.Application.Services
 
             // Crear el token JWT
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]);
+            var key = Encoding.UTF8.GetBytes(_configuration["Jwt:Key"] ?? "DefaultSecretKey123456789012345678901234");
 
             var expiryMinutes = int.Parse(_configuration["Jwt:ExpiryMinutes"] ?? "60");
             var expiration = DateTime.UtcNow.AddMinutes(expiryMinutes);
@@ -43,8 +45,8 @@ namespace DragonBallAPI.Application.Services
                     new Claim(ClaimTypes.Role, "Admin")
                 }),
                 Expires = expiration,
-                Issuer = _configuration["Jwt:Issuer"],
-                Audience = _configuration["Jwt:Audience"],
+                Issuer = _configuration["Jwt:Issuer"] ?? "DragonBallAPI",
+                Audience = _configuration["Jwt:Audience"] ?? "DragonBallAPI.Client",
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
             };
 

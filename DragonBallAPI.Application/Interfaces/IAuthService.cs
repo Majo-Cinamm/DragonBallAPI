@@ -1,16 +1,15 @@
-﻿using System;
+﻿using DragonBallAPI.Application.DTOs;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using DragonBallAPI.Application.DTOs;
-
 
 namespace DragonBallAPI.Application.Interfaces
 {
-    public interface ISyncService
+    public interface IAuthService
     {
-        Task<string> SyncCharactersAsync();
-       
+        Task<TokenDto> AuthenticateAsync(UserDto userDto);
+
     }
 }

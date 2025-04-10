@@ -1,5 +1,6 @@
 ﻿using DragonBallAPI.Core.Entities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.SqlServer;
 using System;
 using System.Collections.Generic;
 using System.Linq;

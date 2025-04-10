@@ -8,10 +8,19 @@ using DragonBallAPI.Infrastructure.Data.Repositories;
 using DragonBallAPI.Infrastructure.ExternalServices;
 using DragonBallAPI.Application.Interfaces;
 using DragonBallAPI.Application.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
+using DragonBallAPI.Infrastructure.Seeders;
+
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
+
 
 // Configurar servicios
 builder.Services.AddControllers();
@@ -62,12 +71,17 @@ if (!string.IsNullOrEmpty(secretKey))
 
 var app = builder.Build();
 
-// Configure el pipeline de solicitudes HTTP
-if (app.Environment.IsDevelopment())
+using (var scope = app.Services.CreateScope())
 {
+    var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    var seeder = new SeederFromApi(dbContext);
+    await seeder.SeedAsync();
+}
+
+// Configure el pipeline de solicitudes HTTP
+
     app.UseSwagger();
     app.UseSwaggerUI();
-}
 
 app.UseHttpsRedirection();
 
@@ -76,5 +90,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/", () => Results.Redirect("/swagger"));
+
 
 app.Run();

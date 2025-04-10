@@ -1,4 +1,6 @@
-﻿using DragonBallAPI.Application.Services;
+﻿using DragonBallAPI.Application.DTOs;
+using DragonBallAPI.Application.Interfaces;
+using DragonBallAPI.Application.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
