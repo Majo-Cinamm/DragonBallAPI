@@ -1,10 +1,5 @@
-<p align="center">
-  <img src="https://i.imgur.com/87rtN6j.mp4" alt="Dragon Ball API Sync Banner" />
-</p>
-
-
 # Dragon Ball API Sync App 🐲
-#### 👩‍💻 Author: Desarrollado por *María José Menjivar*
+#### 👩‍💻 Author: *María José Menjivar*
 ---
 
 An ASP.NET Core project following Clean Architecture principles that syncs characters and transformations from the [Dragon Ball API](https://dragonball-api.com/) and stores them in a SQL Server database. 
