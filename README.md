@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://i.imgur.com/mH1p7So.png](https://imgur.com/gallery/ssj-goku-3SpxXxn#/t/dragon_ball_z" alt="Dragon Ball API Sync Banner" />
+  <img src="https://i.imgur.com/87rtN6j.mp4" alt="Dragon Ball API Sync Banner" />
 </p>
 
 
