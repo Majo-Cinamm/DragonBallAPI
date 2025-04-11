@@ -75,7 +75,9 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     var seeder = new SeederFromApi(dbContext);
-    await seeder.SeedAsync();
+    var result = await seeder.SeedAsync();
+
+    Console.WriteLine(result);
 }
 
 // Configure el pipeline de solicitudes HTTP
