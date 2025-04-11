@@ -6,7 +6,6 @@ using System.Net.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace DragonBallAPI.Infrastructure.Seeders
@@ -27,7 +26,6 @@ namespace DragonBallAPI.Infrastructure.Seeders
 
         public async Task<string> SeedAsync()
         {
-            // ✅ Verifica si hay datos en las tablas
             var hasCharacters = await _context.Characters.AnyAsync();
             var hasTransformations = await _context.Transformations.AnyAsync();
 
@@ -36,80 +34,110 @@ namespace DragonBallAPI.Infrastructure.Seeders
                 return "La base de datos ya contiene datos. Limpie las tablas antes de sincronizar.";
             }
 
-            var response = await _httpClient.GetAsync("characters");
-            if (!response.IsSuccessStatusCode) return "Error al consumir la API externa.";
+            // Traer todos los IDs de las transformaciones
+            var transformationListResponse = await _httpClient.GetAsync("transformations");
+            if (!transformationListResponse.IsSuccessStatusCode) return "Error al obtener lista de transformaciones.";
 
-            var content = await response.Content.ReadAsStringAsync();
-            var apiCharacters = JsonConvert.DeserializeObject<ApiCharacterResponse>(content);
+            var listContent = await transformationListResponse.Content.ReadAsStringAsync();
+            var allTransformations = JsonConvert.DeserializeObject<List<ApiTransformationShort>>(listContent);
 
-            int savedCharacters = 0;
+            int saved = 0;
 
-            foreach (var apiChar in apiCharacters.Items)
+            foreach (var shortTrans in allTransformations)
             {
-                if (apiChar.Race != "Saiyan") continue;
+                // Consumir la transformación individual
+                var detailResponse = await _httpClient.GetAsync($"transformations/{shortTrans.Id}");
+                if (!detailResponse.IsSuccessStatusCode) continue;
 
-                var character = new Character
+                var detailContent = await detailResponse.Content.ReadAsStringAsync();
+                var fullTransformation = JsonConvert.DeserializeObject<ApiTransformationDetail>(detailContent);
+
+                var character = fullTransformation.Character;
+
+                // Solo guardar si el personaje es Saiyan y Z Fighter
+                if (character.Race != "Saiyan" || character.Affiliation != "Z Fighter") continue;
+
+                // Verificar si ya se guardó el personaje
+                var existingCharacter = await _context.Characters
+                    .FirstOrDefaultAsync(c => c.Name == character.Name);
+
+                if (existingCharacter == null)
                 {
-                    Name = apiChar.Name,
-                    Ki = apiChar.Ki,
-                    Race = apiChar.Race,
-                    Gender = apiChar.Gender,
-                    Description = apiChar.Description,
-                    Affiliation = apiChar.Affiliation
-                };
-
-                _context.Characters.Add(character);
-                await _context.SaveChangesAsync(); // Para obtener el Id del personaje
-
-                // Solo guardar transformaciones si el personaje es Z Fighter
-                if (apiChar.Affiliation == "Z Fighter" && apiChar.Transformations != null)
-                {
-                    foreach (var t in apiChar.Transformations.Where(t => t != null))
+                    existingCharacter = new Character
                     {
-                        var transformation = new Transformation
-                        {
-                            Name = t.Name,
-                            Ki = t.Ki,
-                            CharacterId = character.Id
-                        };
+                        Name = character.Name,
+                        Ki = character.Ki,
+                        Race = character.Race,
+                        Gender = character.Gender,
+                        Description = character.Description,
+                        Affiliation = character.Affiliation
+                    };
 
-                        _context.Transformations.Add(transformation);
-                    }
-
-                    await _context.SaveChangesAsync(); // Guardar transformations
+                    _context.Characters.Add(existingCharacter);
+                    await _context.SaveChangesAsync();
                 }
 
-                savedCharacters++;
+                // Guardar la transformación relacionada
+                var transformationEntity = new Transformation
+                {
+                    Name = fullTransformation.Name,
+                    Ki = fullTransformation.Ki,
+                    CharacterId = existingCharacter.Id
+                };
+
+                _context.Transformations.Add(transformationEntity);
+                await _context.SaveChangesAsync();
+
+                saved++;
             }
 
-            return savedCharacters > 0
-                ? "Sincronización exitosa."
-                : "No se encontraron personajes válidos para guardar.";
+            return saved > 0
+                ? $"Sincronización completa. Transformaciones guardadas: {saved}"
+                : "No se guardaron transformaciones.";
         }
-    }
 
-    // Clases auxiliares para deserializar datos de la API
+        // Clases auxiliares para deserializar
 
-    public class ApiCharacterResponse
-    {
-        [JsonProperty("items")]
-        public List<ApiCharacter> Items { get; set; }
-    }
+        public class ApiTransformationShort
+        {
+            [JsonProperty("id")]
+            public int Id { get; set; }
+        }
 
-    public class ApiCharacter
-    {
-        public string Name { get; set; }
-        public string Ki { get; set; }
-        public string Race { get; set; }
-        public string Gender { get; set; }
-        public string Description { get; set; }
-        public string Affiliation { get; set; }
-        public List<ApiTransformation> Transformations { get; set; }
-    }
+        public class ApiTransformationDetail
+        {
+            [JsonProperty("id")]
+            public int Id { get; set; }
 
-    public class ApiTransformation
-    {
-        public string Name { get; set; }
-        public string Ki { get; set; }
+            [JsonProperty("name")]
+            public string Name { get; set; }
+
+            [JsonProperty("ki")]
+            public string Ki { get; set; }
+
+            [JsonProperty("character")]
+            public ApiCharacter Character { get; set; }
+        }
+
+        public class ApiCharacter
+        {
+            [JsonProperty("name")]
+            public string Name { get; set; }
+
+            [JsonProperty("ki")]
+            public string Ki { get; set; }
+
+            [JsonProperty("race")]
+            public string Race { get; set; }
+
+            [JsonProperty("gender")]
+            public string Gender { get; set; }
+
+            [JsonProperty("description")]
+            public string Description { get; set; }
+
+            [JsonProperty("affiliation")]
+            public string Affiliation { get; set; }
+        }
     }
 }
