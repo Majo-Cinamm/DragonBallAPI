@@ -23,14 +23,13 @@ A `Seeder` runs this logic automatically when the app starts.
 - Internet connection (required to access the external API)
 
 ---
-<div style="background-color: #ffdddd; padding: 16px; border-left: 5px solid red; margin-bottom: 20px;">
-  <strong>⚠️ Before proceeding, make sure to create the database named <code>DragonBallDB</code>.</strong><br/>
-  You can do this using SQL Server Management Studio or by running the following command in your SQL terminal:
-</div>
-
-```sql
-CREATE DATABASE DragonBallDB;
-```
+> ⚠️ **IMPORTANT:** Before proceeding, make sure to create the database named `DragonBallDB`.
+>
+> You can do this using SQL Server Management Studio or by running:
+>
+> ```sql
+> CREATE DATABASE DragonBallDB;
+> ```
 ---
 ## ⚙️ How to Run the Project
 
