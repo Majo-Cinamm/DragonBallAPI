@@ -32,20 +32,6 @@ A `Seeder` runs this logic automatically when the app starts.
 > ```
 ---
 ## ⚙️ How to Run the Project
-> ✅ **Set `DragonBallAPI` as the Startup Project:**
->
-> In Visual Studio, right-click on the `DragonBallAPI` project and select **"Set as Startup Project"**.
-
-> 🔄 **Update the Database using NuGet Package Manager Console:**
->
-> Open the **Package Manager Console** (`Tools > NuGet Package Manager > Package Manager Console`) and run:
->
-> ```powershell
-> Update-Database
-> ```
->
-> This command will apply the existing migrations and create the database schema based on your entity models.
----
 ### 1. Clone the repository
 
 ```bash
@@ -53,6 +39,9 @@ git clone https://github.com/your-username/dragonball-api-sync.git
 cd dragonball-api-sync
 
 ```
+> ✅ **Set `DragonBallAPI` as the Startup Project:**
+>
+> In Visual Studio, right-click on the `DragonBallAPI` project and select **"Set as Startup Project"**.
 
 ---
 
@@ -68,15 +57,15 @@ Update the `DragonBallAPI.API/appsettings.json` file with your SQL Server detail
 ```
 **⚠️ Make sure to replace `localhost` and DragonBallDB with your actual SQL Server instance name and preferred database name.**
 
-### 3. Create the database
-Run the following command in the terminal:
-
+---
+### 3. Update the Database using NuGet Package Manager Console:
+Open the **Package Manager Console** (`Tools > NuGet Package Manager > Package Manager Console`) and run:
 ```bash
-dotnet ef database update --startup-project DragonBallAPI.API --project DragonBallAPI.Infrastructure
-
+Update-Database
 ```
 This applies the EF Core migrations and sets up the required tables (`Characters` and `Transformations`).
 
+---
 ### 4. Run the application
 Once everything is configured, start the application with:
 
@@ -85,7 +74,7 @@ dotnet run --project DragonBallAPI.API
 ```
 
 The application will automatically trigger the `SeederFromApi` during startup.
-
+---
 ### 5. Seeder behavior
 The seeder checks the database before inserting:
 
