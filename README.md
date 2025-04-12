@@ -32,7 +32,20 @@ A `Seeder` runs this logic automatically when the app starts.
 > ```
 ---
 ## ⚙️ How to Run the Project
+> ✅ **Set `DragonBallAPI` as the Startup Project:**
+>
+> In Visual Studio, right-click on the `DragonBallAPI` project and select **"Set as Startup Project"**.
 
+> 🔄 **Update the Database using NuGet Package Manager Console:**
+>
+> Open the **Package Manager Console** (`Tools > NuGet Package Manager > Package Manager Console`) and run:
+>
+> ```powershell
+> Update-Database
+> ```
+>
+> This command will apply the existing migrations and create the database schema based on your entity models.
+---
 ### 1. Clone the repository
 
 ```bash
